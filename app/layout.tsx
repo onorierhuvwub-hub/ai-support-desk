@@ -4,7 +4,7 @@ import { Bot, LayoutDashboard, LifeBuoy } from 'lucide-react';
 
 export const metadata = {
   title: 'AI Support Desk | Instant AI Triaging & Support',
-  description: 'AI-powered customer support desk powered by Next.js 14, Supabase, and Claude',
+  description: 'AI-powered customer support desk powered by Next.js 14, Supabase, and OpenAI',
 };
 
 export default function RootLayout({
@@ -50,7 +50,7 @@ export default function RootLayout({
 
         <footer className="border-t border-slate-200 bg-white py-6 mt-12 text-center text-xs text-slate-500">
           <div className="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
-            <p>© {new Date().getFullYear()} AI Support Desk. Powered by Next.js 14, Supabase & Claude.</p>
+            <p>© {new Date().getFullYear()} AI Support Desk. Powered by Next.js 14, Supabase & OpenAI.</p>
             <div className="flex items-center gap-4">
               <span className="inline-flex items-center gap-1 bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-full font-medium">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>

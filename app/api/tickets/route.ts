@@ -1,8 +1,8 @@
 import { NextResponse } from 'next/server';
 import { supabaseAdmin, supabase } from '@/lib/supabase';
-import { triageAndReplyTicket } from '@/lib/anthropic';
+import { triageAndReplyTicket } from '@/lib/openai';
 
-// Choose admin client if service key exists, fallback to standard client
+// Choose admin client if service role key exists, fallback to standard client
 const db = process.env.SUPABASE_SERVICE_ROLE_KEY ? supabaseAdmin : supabase;
 
 export async function POST(request: Request) {
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
       );
     }
 
-    // STEP 2: Attempt Claude AI Triage & Draft Reply
+    // STEP 2: Attempt OpenAI GPT Triage & Draft Reply
     try {
       const aiResult = await triageAndReplyTicket({ name, email, subject, message });
 
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
       });
     } catch (aiError: any) {
       console.warn('AI Triage failed, ticket preserved as pending:', aiError?.message || aiError);
-      
+
       // RESILIENCE FALLBACK: Ticket remains safely saved in Supabase as 'pending'
       return NextResponse.json({
         success: true,

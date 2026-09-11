@@ -91,7 +91,7 @@ export default function SupportFormPage() {
       <div className="text-center space-y-3">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-100 shadow-sm">
           <Sparkles className="w-4 h-4 text-blue-600" />
-          <span>Powered by Claude AI & Supabase</span>
+          <span>Powered by OpenAI & Supabase</span>
         </div>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
           How can we help you today?

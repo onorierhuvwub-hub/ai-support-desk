@@ -161,7 +161,7 @@ export default function DashboardPage() {
             Support Agent Dashboard
           </h1>
           <p className="text-slate-500 text-sm mt-1">
-            Overview and automated triage triage results for customer support tickets.
+            Overview and automated triage results for customer support tickets.
           </p>
         </div>
 
@@ -371,7 +371,7 @@ export default function DashboardPage() {
                       <div className="space-y-2">
                         <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
                           <Sparkles className="w-4 h-4 text-blue-600" />
-                          Claude AI Drafted Reply
+                          OpenAI Drafted Reply
                         </h4>
                         <div className="bg-white border border-blue-200 rounded-xl p-4 text-sm text-slate-800 whitespace-pre-line leading-relaxed shadow-sm">
                           {ticket.ai_reply}

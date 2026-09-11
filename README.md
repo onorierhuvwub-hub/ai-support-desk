@@ -1,8 +1,8 @@
 # AI Support Desk
 
-An AI-powered customer support application built with **Next.js 14 (App Router)**, **Tailwind CSS**, **Supabase (Postgres + RLS)**, and **Claude AI** via `@anthropic-ai/sdk`.
+An AI-powered customer support application built with **Next.js 14 (App Router)**, **Tailwind CSS**, **Supabase (Postgres + RLS)**, and **OpenAI** via `openai` SDK (`gpt-4o-mini`).
 
-Designed for single-call customer triage and draft reply generation with bulletproof resilience and a full agent management dashboard.
+Designed for single-call customer triage and draft reply generation with structured JSON outputs, bulletproof resilience, and a full agent management dashboard.
 
 ---
 
@@ -11,7 +11,7 @@ Designed for single-call customer triage and draft reply generation with bulletp
 1. **Instant Support Form (`/`)**:
    - Customers submit name, email, subject, and message.
    - Ticket is saved to Supabase immediately in `pending` state.
-   - Claude drafts a polite customer reply and triages the issue in **one single API call**.
+   - OpenAI drafts a polite customer reply and triages the issue in **one single API call** using `{ response_format: { type: "json_object" } }`.
    - Reply displays inline immediately after submission.
 
 2. **Support Agent Dashboard (`/dashboard`)**:
@@ -20,15 +20,15 @@ Designed for single-call customer triage and draft reply generation with bulletp
    - Expandable rows displaying:
      - Original customer message
      - Internal AI triage summary
-     - AI draft reply
+     - OpenAI draft reply
      - Urgency badge (Low / Medium / High) & Category tag
    - **Mark Resolved** toggle button.
 
 3. **Advanced AI Automation Triad**:
-   - Single Claude call returns structured JSON: `{ reply, category, urgency, summary }`.
+   - Single OpenAI call returns structured JSON: `{ reply, category, urgency, summary }`.
 
 4. **Resilience & Fallback Protection**:
-   - If the Anthropic API call fails (rate limit, invalid API key, network timeout), the ticket remains safely persisted in Supabase as `pending`.
+   - If the OpenAI API call fails (rate limit, invalid API key, network timeout), the ticket remains safely persisted in Supabase as `pending`.
    - The user receives an instant confirmation that support will follow up.
 
 ---
@@ -59,18 +59,16 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-supabase-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your-supabase-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-supabase-service-role-key
 
-# Anthropic API Key (from https://console.anthropic.com)
-ANTHROPIC_API_KEY=your-anthropic-api-key
+# OpenAI API Key (from https://platform.openai.com)
+OPENAI_API_KEY=your-openai-api-key
 
-# Optional: Model override (defaults to 'claude-sonnet-5' if unspecified)
-# ANTHROPIC_MODEL=claude-3-5-sonnet-20241022
+# Optional: Model override (defaults to 'gpt-4o-mini', or 'gpt-4o' for higher quality)
+OPENAI_MODEL=gpt-4o-mini
 ```
 
 ---
 
 ### 3. Install & Run Locally
-
-Using PowerShell / Command Prompt on Windows or standard terminal:
 
 ```bash
 # Install dependencies
@@ -86,17 +84,17 @@ Open [http://localhost:3000](http://localhost:3000) in your browser:
 
 ---
 
-## ⚠️ Important: Anthropic Model Adaptation
+## ⚙️ Model Customization (`lib/openai.ts`)
 
-By default, `lib/anthropic.ts` is configured with the model string `claude-sonnet-5`.
+By default, `lib/openai.ts` uses `gpt-4o-mini` for fast and cost-effective triage.
 
-If your Anthropic account has access to a different model identifier (such as `claude-3-5-sonnet-20241022`, `claude-3-5-sonnet-20240620`, or `claude-3-haiku-20240307`), you can:
+If you want higher-quality replies over cost, swap the default model to `gpt-4o` in `lib/openai.ts`:
 
-1. Update the default constant in `lib/anthropic.ts`:
-   ```typescript
-   export const ANTHROPIC_MODEL = process.env.ANTHROPIC_MODEL || 'claude-3-5-sonnet-20241022';
-   ```
-2. Or set the `ANTHROPIC_MODEL` environment variable in `.env.local` / Vercel.
+```typescript
+export const OPENAI_MODEL = process.env.OPENAI_MODEL || 'gpt-4o';
+```
+
+Or set the `OPENAI_MODEL=gpt-4o` environment variable in `.env.local` / Vercel.
 
 ---
 
@@ -105,22 +103,15 @@ If your Anthropic account has access to a different model identifier (such as `c
 This application is ready to deploy directly to Vercel.
 
 ### Option 1: Deploy via Vercel Dashboard
-1. Push your repository to GitHub / GitLab / Bitbucket.
+1. Push your repository to GitHub.
 2. Import the repository in [Vercel](https://vercel.com/new).
-3. Under **Environment Variables**, add the following keys:
+3. Under **Environment Variables**, add:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY`
-   - `ANTHROPIC_API_KEY`
-   - `ANTHROPIC_MODEL` (Optional, e.g. `claude-3-5-sonnet-20241022`)
+   - `OPENAI_API_KEY`
+   - `OPENAI_MODEL` (Optional, e.g. `gpt-4o-mini` or `gpt-4o`)
 4. Click **Deploy**.
-
-### Option 2: Deploy via Vercel CLI
-```bash
-npm install -g vercel
-vercel
-```
-Follow the interactive prompts and configure environment variables when prompted or in project settings.
 
 ---
 
@@ -131,7 +122,7 @@ ai-support-desk/
 ├── app/
 │   ├── api/
 │   │   ├── tickets/
-│   │   │   ├── route.ts          # POST (create + Claude triage) & GET (list)
+│   │   │   ├── route.ts          # POST (create + OpenAI triage) & GET (list)
 │   │   │   └── [id]/
 │   │   │       └── route.ts      # PATCH (update ticket status)
 │   ├── dashboard/
@@ -140,7 +131,7 @@ ai-support-desk/
 │   ├── layout.tsx                # App layout & navbar header
 │   └── page.tsx                  # Customer Support Form & Inline AI Reply
 ├── lib/
-│   ├── anthropic.ts              # Claude API integration (@anthropic-ai/sdk)
+│   ├── openai.ts                 # OpenAI API integration (gpt-4o-mini JSON mode)
 │   ├── supabase.ts               # Supabase client setup
 │   └── types.ts                  # TypeScript types for tickets & AI triage
 ├── supabase/

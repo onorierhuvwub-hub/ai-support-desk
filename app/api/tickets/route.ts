@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { saveTicketToDb, updateTicketInDb, getTicketsFromDb } from '@/lib/supabase';
 import { triageAndReplyTicket } from '@/lib/openai';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();

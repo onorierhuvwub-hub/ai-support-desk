@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { updateTicketInDb } from '@/lib/supabase';
 
+export const dynamic = 'force-dynamic';
+export const runtime = 'nodejs';
+
 export async function PATCH(
   request: Request,
   { params }: { params: { id: string } }

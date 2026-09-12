@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { Ticket, TicketStatus } from './types';
+import { Ticket } from './types';
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co';
 const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder-anon-key';
@@ -18,8 +18,15 @@ export const isSupabaseConfigured = Boolean(
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 export const supabaseAdmin = createClient(supabaseUrl, supabaseServiceRoleKey);
 
-// In-Memory store for resilient local testing when Supabase keys are not configured yet
-const mockTicketsStore: Ticket[] = [];
+// Persistent Global Store across Next.js dev server reloads
+declare global {
+  var __mockTicketsStore: Ticket[] | undefined;
+}
+
+const mockTicketsStore: Ticket[] = globalThis.__mockTicketsStore || [];
+if (!globalThis.__mockTicketsStore) {
+  globalThis.__mockTicketsStore = mockTicketsStore;
+}
 
 /**
  * Resilient Ticket Creation:
@@ -103,7 +110,7 @@ export async function updateTicketInDb(
     }
   }
 
-  // Update in local store
+  // Update in global store
   const ticket = mockTicketsStore.find((t) => t.id === id);
   if (ticket) {
     Object.assign(ticket, updates, { updated_at: new Date().toISOString() });
@@ -121,7 +128,7 @@ export async function getTicketsFromDb(statusFilter?: string | null): Promise<Ti
     try {
       const db = process.env.SUPABASE_SERVICE_ROLE_KEY ? supabaseAdmin : supabase;
       let query = db.from('tickets').select('*').order('created_at', { ascending: false });
-      
+
       if (statusFilter && statusFilter !== 'all') {
         query = query.eq('status', statusFilter);
       }
@@ -135,7 +142,7 @@ export async function getTicketsFromDb(statusFilter?: string | null): Promise<Ti
     }
   }
 
-  // Filter local store
+  // Filter global store
   if (statusFilter && statusFilter !== 'all') {
     return mockTicketsStore.filter((t) => t.status === statusFilter);
   }

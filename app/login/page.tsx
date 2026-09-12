@@ -63,7 +63,7 @@ function LoginForm() {
             id="username"
             type="text"
             required
-            placeholder="bbrown123"
+            placeholder="Enter admin username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-slate-900 text-sm outline-none transition"
@@ -130,13 +130,6 @@ export default function LoginPage() {
           <Suspense fallback={<div className="text-center py-6 text-xs text-slate-400">Loading login form...</div>}>
             <LoginForm />
           </Suspense>
-
-          {/* Admin Credentials Info Box */}
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-xs text-slate-600 space-y-1">
-            <p className="font-bold text-slate-800">Admin Credentials:</p>
-            <p>Username: <code className="bg-slate-200/80 px-1.5 py-0.5 rounded font-mono text-slate-900">bbrown123</code></p>
-            <p>Password: <code className="bg-slate-200/80 px-1.5 py-0.5 rounded font-mono text-slate-900">GodisLove123</code></p>
-          </div>
         </div>
       </div>
     </div>

@@ -1,7 +1,5 @@
 import { NextResponse } from 'next/server';
-import { supabaseAdmin, supabase } from '@/lib/supabase';
-
-const db = process.env.SUPABASE_SERVICE_ROLE_KEY ? supabaseAdmin : supabase;
+import { updateTicketInDb } from '@/lib/supabase';
 
 export async function PATCH(
   request: Request,
@@ -23,19 +21,13 @@ export async function PATCH(
       );
     }
 
-    const { data: ticket, error } = await db
-      .from('tickets')
-      .update({ status })
-      .eq('id', ticketId)
-      .select()
-      .single();
+    const updatedTicket = await updateTicketInDb(ticketId, { status });
 
-    if (error || !ticket) {
-      console.error('Error updating ticket status in Supabase:', error);
+    if (!updatedTicket) {
       return NextResponse.json({ error: 'Failed to update ticket status.' }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true, ticket });
+    return NextResponse.json({ success: true, ticket: updatedTicket });
   } catch (err: any) {
     console.error('Unexpected error in PATCH /api/tickets/[id]:', err);
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });

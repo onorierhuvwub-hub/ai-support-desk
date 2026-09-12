@@ -16,7 +16,8 @@ import {
   Tag,
   MessageSquare,
   FileText,
-  Check
+  Check,
+  LogOut
 } from 'lucide-react';
 import { Ticket, TicketStatus } from '@/lib/types';
 
@@ -71,6 +72,11 @@ export default function DashboardPage() {
     } finally {
       setUpdatingId(null);
     }
+  };
+
+  const handleLogout = async () => {
+    await fetch('/api/auth/logout', { method: 'POST' });
+    window.location.href = '/login';
   };
 
   const toggleExpand = (id: string) => {
@@ -154,7 +160,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      {/* Dashboard Title & Refresh Header */}
+      {/* Dashboard Title & Refresh/Logout Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
@@ -165,14 +171,24 @@ export default function DashboardPage() {
           </p>
         </div>
 
-        <button
-          onClick={fetchTickets}
-          disabled={loading}
-          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 shadow-sm transition disabled:opacity-50"
-        >
-          <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
-          <span>Refresh</span>
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={fetchTickets}
+            disabled={loading}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white border border-slate-200 text-slate-700 font-semibold text-sm hover:bg-slate-50 shadow-sm transition disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${loading ? 'animate-spin' : ''}`} />
+            <span>Refresh</span>
+          </button>
+
+          <button
+            onClick={handleLogout}
+            className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-red-50 border border-red-200 text-red-700 font-semibold text-sm hover:bg-red-100 shadow-sm transition"
+          >
+            <LogOut className="w-4 h-4" />
+            <span>Log Out</span>
+          </button>
+        </div>
       </div>
 
       {/* Metric Cards */}

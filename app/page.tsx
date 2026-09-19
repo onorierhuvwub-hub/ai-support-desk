@@ -155,7 +155,7 @@ export default function SupportFormPage() {
           </div>
           <div className="space-y-5 p-6 sm:p-8">
             <div className="flex flex-wrap gap-3 text-sm font-semibold">
-              <span className="rounded-full bg-red-100 px-3 py-1 text-red-800">▲ General Inquiry</span>
+              <span className="rounded-full bg-red-100 px-3 py-1 text-red-800">▲ {ticket.category || 'General Inquiry'}</span>
               <span className="rounded-full bg-blue-100 px-3 py-1 text-blue-900">
                 ★ {ticket.urgency || 'high'} urgency
               </span>
